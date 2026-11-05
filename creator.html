@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HistòriaLab Notes - Creator Studio Pro</title>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- html2pdf.js & SortableJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+  <style>
+    :root {
+      --duo-green: #58cc02;
+      --duo-green-dark: #46a302;
+      --duo-blue: #1cb0f6;
+      --duo-blue-dark: #1899d6;
+      --duo-orange: #ff9600;
+      --duo-orange-dark: #e08400;
+      --duo-purple: #ce82ff;
+      --duo-purple-dark: #b060e0;
+      --duo-red: #ff4b4b;
+      --duo-red-dark: #ea2b2b;
+      --duo-yellow: #ffc800;
+      --duo-yellow-dark: #e0b000;
+      --duo-border: #e2e8f0;
+      --bg-studio: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-studio);
+      color: #f8fafc;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4, h5, .font-display { font-family: 'Fredoka', sans-serif; }
+
+    /* NAVBAR */
+    .top-bar {
+      height: 60px;
+      background: #1e293b;
+      border-bottom: 2px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      z-index: 100;
+    }
+
+    .brand-logo {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .brand-logo i { color: var(--duo-green); }
+
+    .action-btn-group { display: flex; gap: 0.6rem; align-items: center; }
+
+    .btn-studio {
+      font-family: 'Fredoka', sans-serif;
+      padding: 0.45rem 0.9rem;
+      border-radius: 12px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-studio:active { transform: translateY(2px); }
+    .btn-green { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-dark); }
+    .btn-blue { background: var(--duo-blue); color: white; box-shadow: 0 4px 0 var(--duo-blue-dark); }
+    .btn-purple { background: var(--duo-purple); color: white; box-shadow: 0 4px 0 var(--duo-purple-dark); }
+    .btn-orange { background: var(--duo-orange); color: white; box-shadow: 0 4px 0 var(--duo-orange-dark); }
+    .btn-dark { background: #334155; color: white; border: 1px solid #475569; }
+    .btn-dark:hover { background: #475569; }
+
+    /* STUDIO LAYOUT */
+    .studio-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar-left {
+      width: 380px;
+      background: #1e293b;
+      border-right: 2px solid #334155;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-tabs { display: flex; border-bottom: 2px solid #334155; background: #0f172a; }
+    .tab-btn {
+      flex: 1;
+      padding: 0.85rem 0.4rem;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .tab-btn.active { color: var(--duo-green); border-bottom: 3px solid var(--duo-green); background: #1e293b; }
+
+    .tab-content { padding: 1.25rem; display: none; }
+    .tab-content.active { display: block; }
+
+    .section-label {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* DRAGGABLE CARDS MENU */
+    .draggable-card {
+      background: #334155;
+      border: 2px solid #475569;
+      border-radius: 14px;
+      padding: 0.75rem 0.9rem;
+      margin-bottom: 0.75rem;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .draggable-card:hover { border-color: var(--duo-green); transform: translateX(3px); background: #3d4d65; }
+    .draggable-card-info { display: flex; align-items: center; gap: 0.75rem; }
+    .draggable-card-info i { font-size: 1.25rem; color: var(--duo-green); width: 24px; text-align: center; }
+
+    /* CANVAS VIEWPORT */
+    .canvas-viewport {
+      flex: 1;
+      background: #0f172a;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      position: relative;
+    }
+
+    /* A4 PAGE CONTAINER */
+    .a4-page {
+      width: 210mm;
+      min-height: 297mm;
+      background: white;
+      color: #1e293b;
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.4);
+      padding: 18mm 16mm 18mm 16mm;
+      box-sizing: border-box;
+      position: relative;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-header-tag {
+      position: absolute;
+      top: -28px;
+      left: 0;
+      background: #334155;
+      color: #cbd5e1;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.75rem;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .page-watermark {
+      position: absolute;
+      bottom: 12mm;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #94a3b8;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .page-watermark i { color: var(--duo-green); margin-right: 4px; }
+
+    /* CANVAS BLOCKS & SECTIONS */
+    .blocks-container {
+      min-height: 230mm;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .canvas-item {
+      position: relative;
+      border: 2px dashed transparent;
+      border-radius: 16px;
+      transition: border-color 0.2s ease;
+    }
+
+    .canvas-item:hover { border-color: var(--duo-blue); }
+
+    .item-controls {
+      position: absolute;
+      top: -14px;
+      right: 12px;
+      background: #0f172a;
+      border-radius: 8px;
+      display: none;
+      gap: 4px;
+      padding: 3px 6px;
+      z-index: 50;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    .canvas-item:hover > .item-controls { display: flex; }
+
+    /* INDIVIDUAL SUB-ITEM CONTROLS */
+    .sub-item-wrapper {
+      position: relative;
+    }
+    
+    .sub-controls {
+      position: absolute;
+      top: -12px;
+      right: 8px;
+      background: #0f172a;
+      border-radius: 6px;
+      display: none;
+      gap: 4px;
+      padding: 2px 4px;
+      z-index: 60;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+      align-items: center;
+    }
+
+    .sub-item-wrapper:hover > .sub-controls {
+      display: flex;
+    }
+
+    .btn-ctrl {
+      background: #334155;
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-ctrl:hover { background: var(--duo-blue); }
+    .btn-ctrl-danger:hover { background: var(--duo-red); }
+
+    /* RENDERED COMPONENTS IN CANVAS */
+    .duo-card-render {
+      border: 3px solid var(--duo-border);
+      border-bottom: 6px solid var(--duo-border);
+      border-radius: 18px;
+      background: white;
+      padding: 1.1rem;
+      color: #1e293b;
+    }
+
+    /* FIX FOR TEXT EDITING CONTRAST ISSUE */
+    [contenteditable="true"] {
+      outline: none;
+      color: #1e293b;
+      background-color: transparent;
+      border-radius: 4px;
+      padding: 1px 3px;
+      transition: background-color 0.2s ease, outline 0.2s ease;
+    }
+
+    [contenteditable="true"]:hover {
+      outline: 1.5px dashed var(--duo-blue);
+    }
+
+    [contenteditable="true"]:focus {
+      outline: 2px solid var(--duo-blue) !important;
+      background-color: #f0f9ff !important;
+      color: #0f172a !important;
+    }
+
+    .callout-box {
+      border-radius: 14px;
+      padding: 0.85rem;
+      border: 2px solid var(--duo-border);
+      border-left-width: 6px;
+    }
+
+    .grid-2-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .grid-3-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; }
+
+    .timeline-wrapper { position: relative; padding-left: 2rem; border-left: 4px solid #cbd5e1; margin-left: 0.8rem; }
+    .timeline-node-item { position: relative; margin-bottom: 0.85rem; }
+    .timeline-icon-dot {
+      position: absolute; left: -2.85rem; top: 0; width: 30px; height: 30px;
+      border-radius: 10px; color: white;
+      display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+      border: 2px solid white; cursor: pointer;
+    }
+
+    .text-highlight { background-color: #fef08a; padding: 0.1rem 0.4rem; border-radius: 6px; font-weight: 800; color: #854d0e; }
+    .bold-green { color: var(--duo-green-dark); font-weight: 800; }
+    .bold-blue { color: var(--duo-blue-dark); font-weight: 800; }
+    .bold-purple { color: var(--duo-purple-dark); font-weight: 800; }
+    .bold-red { color: var(--duo-red-dark); font-weight: 800; }
+
+    /* FLOATING FORMATTING TOOLBAR */
+    .floating-toolbar {
+      position: fixed;
+      top: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      border: 2px solid var(--duo-blue);
+      border-radius: 14px;
+      padding: 0.4rem 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .floating-toolbar.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .toolbar-btn {
+      background: #1e293b;
+      color: white;
+      border: 1px solid #334155;
+      padding: 0.35rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .toolbar-btn:hover { background: #334155; color: var(--duo-blue); }
+
+    /* MODAL ICON GALLERY */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-modal {
+      background: #1e293b;
+      color: white;
+      border-radius: 20px;
+      border: 3px solid #334155;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 650px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .icon-search-input {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      border: 2px solid #334155;
+      background: #0f172a;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      margin: 0.8rem 0;
+      outline: none;
+    }
+
+    .icon-search-input:focus { border-color: var(--duo-blue); }
+
+    .icon-category-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .cat-tab {
+      background: #0f172a;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 0.3rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .cat-tab.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue-dark); }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+      gap: 0.65rem;
+      overflow-y: auto;
+      padding: 0.5rem;
+      max-height: 350px;
+    }
+
+    .icon-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      border: 2px solid #334155;
+      background: #0f172a;
+      font-size: 1.35rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--duo-green);
+      color: var(--duo-green);
+      background: #1e293b;
+      transform: scale(1.1);
+    }
+
+    /* COLOR SWATCHES */
+    .color-swatch-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .color-swatch {
+      width: 28px; height: 28px; border-radius: 8px; cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
+    }
+    .color-swatch:hover { transform: scale(1.15); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <header class="top-bar">
+    <div class="brand-logo">
+      <i class="fa-solid fa-graduation-cap"></i>
+      Història<span style="color:var(--duo-green);">Lab</span> Studio Pro
+    </div>
+
+    <div class="action-btn-group">
+      <button class="btn-studio btn-dark" onclick="addPage()"><i class="fa-solid fa-plus"></i> Afegir Pàgina</button>
+      <button class="btn-studio btn-dark" onclick="exportNote()"><i class="fa-solid fa-download"></i> Guardar .note</button>
+      <label class="btn-studio btn-dark" style="margin:0; cursor:pointer;">
+        <i class="fa-solid fa-folder-open"></i> Obrir .note
+        <input type="file" id="importFileInput" accept=".note,.json" onchange="importNote(event)" style="display:none;">
+      </label>
+      <button class="btn-studio btn-green" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Descarregar PDF A4</button>
+    </div>
+  </header>
+
+  <!-- FLOATING TEXT TOOLBAR -->
+  <div id="floatingToolbar" class="floating-toolbar">
+    <button class="toolbar-btn" onclick="applyFormat('bold')"><i class="fa-solid fa-bold"></i></button>
+    <button class="toolbar-btn" onclick="applyFormat('italic')"><i class="fa-solid fa-italic"></i></button>
+    <button class="toolbar-btn" onclick="applyHighlight()"><i class="fa-solid fa-highlighter" style="color:var(--duo-yellow);"></i></button>
+    <button class="toolbar-btn" onclick="applyColor('bold-green')"><i class="fa-solid fa-circle" style="color:var(--duo-green);"></i></button>
+    <button class="toolbar-btn" onclick="applyColor('bold-blue')"><i class="fa-solid fa-circle" style="color:var(--duo-blue);"></i></button>
+    <button class="toolbar-btn" onclick="applyColor('bold-red')"><i class="fa-solid fa-circle" style="color:var(--duo-red);"></i></button>
+    <button class="toolbar-btn" onclick="applyColor('bold-purple')"><i class="fa-solid fa-circle" style="color:var(--duo-purple);"></i></button>
+    <input type="color" oninput="applyCustomColor(this.value)" onchange="applyCustomColor(this.value)" style="width:26px; height:26px; border:none; background:none; cursor:pointer;" title="Color Personalitzat">
+  </div>
+
+  <!-- STUDIO MAIN LAYOUT -->
+  <div class="studio-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-left">
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" onclick="switchTab('elements')">Elements</button>
+        <button class="tab-btn" onclick="switchTab('cover')">Portada</button>
+        <button class="tab-btn" onclick="switchTab('presets')">Plantilles</button>
+      </div>
+
+      <!-- TAB 1: ELEMENTS -->
+      <div id="tab-elements" class="tab-content active">
+        <div class="section-label"><i class="fa-solid fa-hand-pointer" style="color:var(--duo-blue);"></i> Afegir o Arrossegar Elements</div>
+        <p style="font-size:0.75rem; color:#94a3b8; margin-bottom:1rem;">Clica o arrossega qualsevol bloc directament a la pàgina activa:</p>
+
+        <div class="draggable-card" onclick="addBlock('textBlock')">
+          <div class="draggable-card-info"><i class="fa-solid fa-align-left"></i><span>Resum Teòric / Text</span></div>
+          <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Afegir</button>
+        </div>
+
+        <div class="draggable-card" onclick="addBlock('callouts')">
+          <div class="draggable-card-info"><i class="fa-solid fa-lightbulb" style="color:var(--duo-yellow);"></i><span>Quadres d'Èmfasi</span></div>
+          <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Afegir</button>
+        </div>
+
+        <div class="draggable-card" onclick="addBlock('flowchart')">
+          <div class="draggable-card-info"><i class="fa-solid fa-diagram-project" style="color:var(--duo-purple);"></i><span>Diagrama de Flux</span></div>
+          <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Afegir</button>
+        </div>
+
+        <div class="draggable-card" onclick="addBlock('matrix')">
+          <div class="draggable-card-info"><i class="fa-solid fa-border-all" style="color:var(--duo-orange);"></i><span>Matriu Comparativa</span></div>
+          <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Afegir</button>
+        </div>
+
+        <div class="draggable-card" onclick="addBlock('timeline')">
+          <div class="draggable-card-info"><i class="fa-solid fa-timeline" style="color:var(--duo-green);"></i><span>Línia del Temps</span></div>
+          <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Afegir</button>
+        </div>
+
+        <div class="draggable-card" onclick="addBlock('sources')">
+          <div class="draggable-card-info"><i class="fa-solid fa-quote-left" style="color:var(--duo-yellow-dark);"></i><span>Font Històrica / Cita</span></div>
+          <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Afegir</button>
+        </div>
+
+        <div class="draggable-card" onclick="addBlock('character')">
+          <div class="draggable-card-info"><i class="fa-solid fa-user-astronaut" style="color:var(--duo-purple);"></i><span>Fitxa de Personatge</span></div>
+          <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Afegir</button>
+        </div>
+      </div>
+
+      <!-- TAB 2: PORTADA DESIGNER -->
+      <div id="tab-cover" class="tab-content">
+        <div class="section-label"><i class="fa-solid fa-palette" style="color:var(--duo-orange);"></i> Personalitzador de Portada</div>
+
+        <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:0.5rem;">Estil i Gradient de Fons:</p>
+        <div class="color-swatch-bar">
+          <div class="color-swatch" style="background: linear-gradient(135deg, #58cc02, #059669);" onclick="setCoverBg('linear-gradient(135deg, #58cc02, #059669)')"></div>
+          <div class="color-swatch" style="background: linear-gradient(135deg, #1cb0f6, #0284c7);" onclick="setCoverBg('linear-gradient(135deg, #1cb0f6, #0284c7)')"></div>
+          <div class="color-swatch" style="background: linear-gradient(135deg, #ce82ff, #7e22ce);" onclick="setCoverBg('linear-gradient(135deg, #ce82ff, #7e22ce)')"></div>
+          <div class="color-swatch" style="background: linear-gradient(135deg, #ff9600, #c2410c);" onclick="setCoverBg('linear-gradient(135deg, #ff9600, #c2410c)')"></div>
+          <div class="color-swatch" style="background: linear-gradient(135deg, #ff4b4b, #9f1239);" onclick="setCoverBg('linear-gradient(135deg, #ff4b4b, #9f1239)')"></div>
+        </div>
+
+        <div style="margin-top:1.5rem;">
+          <button class="btn-studio btn-blue" style="width:100%; justify-content:center;" onclick="openIconModal('cover')">
+            <i class="fa-solid fa-icons"></i> Canviar Icona de la Portada
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 3: WORKING PRESETS -->
+      <div id="tab-presets" class="tab-content">
+        <div class="section-label"><i class="fa-solid fa-folder-open" style="color:var(--duo-purple);"></i> Plantilles Estructurals</div>
+
+        <button class="btn-studio btn-dark" style="width:100%; justify-content:flex-start; margin-bottom:0.6rem;" onclick="loadPreset('apunts_basics')">
+          <i class="fa-solid fa-file-lines" style="color:var(--duo-blue);"></i> Plantilla: Apunts Bàsics
+        </button>
+
+        <button class="btn-studio btn-dark" style="width:100%; justify-content:flex-start; margin-bottom:0.6rem;" onclick="loadPreset('timeline')">
+          <i class="fa-solid fa-timeline" style="color:var(--duo-green);"></i> Plantilla: Línia del Temps
+        </button>
+
+        <button class="btn-studio btn-dark" style="width:100%; justify-content:flex-start;" onclick="loadPreset('biografia')">
+          <i class="fa-solid fa-user-tie" style="color:var(--duo-purple);"></i> Plantilla: Biografia Històrica
+        </button>
+      </div>
+    </aside>
+
+    <!-- CANVAS VIEWPORT (MULTI-PAGE) -->
+    <main class="canvas-viewport" id="canvasViewport">
+      <!-- PAGES WILL BE RENDERED HERE -->
+    </main>
+
+  </div>
+
+  <!-- ICON GALLERY MODAL WITH SEARCH -->
+  <div id="iconModal" class="modal-backdrop hidden">
+    <div class="icon-modal">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 class="font-display" style="font-size:1.2rem;"><i class="fa-solid fa-icons" style="color:var(--duo-blue);"></i> Galeria d'Icones Històriques</h3>
+        <button class="btn-ctrl" onclick="closeIconModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <input type="text" id="iconSearchInput" class="icon-search-input" placeholder="🔍 Cerca icona (ex: crown, book, flag, war...)" oninput="filterIcons()">
+
+      <div class="icon-category-tabs">
+        <button class="cat-tab active" onclick="filterCat('all')">Totes</button>
+        <button class="cat-tab" onclick="filterCat('history')">Història</button>
+        <button class="cat-tab" onclick="filterCat('war')">Guerra & Revolució</button>
+        <button class="cat-tab" onclick="filterCat('politics')">Política & Reialme</button>
+        <button class="cat-tab" onclick="filterCat('culture')">Documents & Cultura</button>
+        <button class="cat-tab" onclick="filterCat('duo')">Badges Duolingo</button>
+      </div>
+
+      <div id="iconGridContainer" class="icon-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    // ICON LIBRARY DATABASE
+    const ICON_DATABASE = [
+      { name: 'fa-monument', cat: 'history' },
+      { name: 'fa-landmark', cat: 'history' },
+      { name: 'fa-building-columns', cat: 'history' },
+      { name: 'fa-scroll', cat: 'culture' },
+      { name: 'fa-crown', cat: 'politics' },
+      { name: 'fa-chess-king', cat: 'politics' },
+      { name: 'fa-shield-halved', cat: 'war' },
+      { name: 'fa-crosshairs', cat: 'war' },
+      { name: 'fa-skull-crossbones', cat: 'war' },
+      { name: 'fa-fire', cat: 'war' },
+      { name: 'fa-bolt', cat: 'duo' },
+      { name: 'fa-flag', cat: 'politics' },
+      { name: 'fa-book-open', cat: 'culture' },
+      { name: 'fa-book', cat: 'culture' },
+      { name: 'fa-feather', cat: 'culture' },
+      { name: 'fa-quote-left', cat: 'culture' },
+      { name: 'fa-brain', cat: 'duo' },
+      { name: 'fa-graduation-cap', cat: 'duo' },
+      { name: 'fa-award', cat: 'duo' },
+      { name: 'fa-medal', cat: 'duo' },
+      { name: 'fa-trophy', cat: 'duo' },
+      { name: 'fa-star', cat: 'duo' },
+      { name: 'fa-gavel', cat: 'politics' },
+      { name: 'fa-scale-balanced', cat: 'politics' },
+      { name: 'fa-user-astronaut', cat: 'culture' },
+      { name: 'fa-users-gear', cat: 'culture' },
+      { name: 'fa-industry', cat: 'history' },
+      { name: 'fa-gears', cat: 'history' },
+      { name: 'fa-train', cat: 'history' },
+      { name: 'fa-globe', cat: 'history' },
+      { name: 'fa-map-location-dot', cat: 'history' },
+      { name: 'fa-compass', cat: 'history' },
+      { name: 'fa-hourglass-start', cat: 'history' }
+    ];
+
+    // STATE STRUCTURE
+    let noteState = {
+      title: "Títol de la Teva Temàtica",
+      subtitle: "Subtítol explicatiu o cronologia principal del document",
+      unitText: "UNITAT 1",
+      coverIcon: "fa-monument",
+      coverBg: "linear-gradient(135deg, #58cc02, #059669)",
+      pages: [
+        { id: 'page-1', blocks: [] }
+      ]
+    };
+
+    let activeIconTarget = null;
+    let activeCatFilter = 'all';
+    let savedRange = null;
+
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPreset('apunts_basics');
+      renderIconGrid();
+      setupFloatingToolbar();
+    });
+
+    // HELPER: RENDER SUB-ITEM CONTROLS
+    function renderSubControls(pIdx, bIdx, arrayName, subIdx, currentColor) {
+      return `
+        <div class="sub-controls">
+          <input type="color" value="${currentColor}" onchange="updateSubItemColor(${pIdx}, ${bIdx}, '${arrayName}', ${subIdx}, this.value)" style="width:20px; height:20px; border:none; padding:0; cursor:pointer; background:none;" title="Color d'aquest element">
+          <button class="btn-ctrl btn-ctrl-danger" style="width:20px; height:20px; font-size:0.65rem;" onclick="deleteSubItem(${pIdx}, ${bIdx}, '${arrayName}', ${subIdx})" title="Eliminar element"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      `;
+    }
+
+    // RENDER ALL PAGES IN CANVAS
+    function renderCanvas() {
+      const viewport = document.getElementById('canvasViewport');
+      viewport.innerHTML = '';
+
+      // PAGE 1: COVER PAGE
+      const coverPageDiv = document.createElement('div');
+      coverPageDiv.className = 'a4-page';
+      coverPageDiv.id = 'page-cover';
+      coverPageDiv.innerHTML = `
+        <div class="page-header-tag"><i class="fa-solid fa-file"></i> Pàgina 1 - Portada</div>
+        
+        <div class="duo-card-render" style="background: ${noteState.coverBg}; color: white; text-align: center; padding: 3rem 1.5rem; height: 250mm; display: flex; flex-direction: column; justify-content: space-between; border-radius: 24px; border: 4px solid rgba(0,0,0,0.15);">
+          <div>
+            <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 20px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; cursor: pointer;" onclick="openIconModal('cover')">
+              <i class="fa-solid ${noteState.coverIcon}"></i>
+            </div>
+            <span style="background: rgba(255,255,255,0.25); padding: 0.35rem 1rem; border-radius: 99px; font-size: 0.85rem; font-weight: 800; font-family: 'Fredoka', sans-serif;" contenteditable="true" onblur="noteState.unitText=this.innerText">
+              ${noteState.unitText || 'UNITAT 1'}
+            </span>
+            <h1 class="font-display" style="font-size: 2.5rem; margin: 1.25rem 0 0.75rem; line-height: 1.2; color: white;" contenteditable="true" onblur="noteState.title=this.innerText">${noteState.title}</h1>
+            <p style="font-size: 1.1rem; opacity: 0.95; font-weight: 600; max-width: 500px; margin: 0 auto; color: white;" contenteditable="true" onblur="noteState.subtitle=this.innerText">${noteState.subtitle}</p>
+          </div>
+
+          <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+            <i class="fa-solid fa-book-open" style="font-size: 1.25rem;"></i>
+            <span style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; font-weight: 700;">Creat amb: HistòriaLab Notes</span>
+          </div>
+        </div>
+      `;
+      viewport.appendChild(coverPageDiv);
+
+      // CONTENT PAGES
+      noteState.pages.forEach((page, pIdx) => {
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'a4-page';
+        pageDiv.id = page.id;
+
+        const pageNum = pIdx + 2;
+
+        pageDiv.innerHTML = `
+          <div class="page-header-tag">
+            <i class="fa-solid fa-file-lines"></i> Pàgina ${pageNum}
+            ${noteState.pages.length > 1 ? `<button class="btn-ctrl btn-ctrl-danger" style="margin-left:8px;" onclick="deletePage(${pIdx})"><i class="fa-solid fa-trash"></i></button>` : ''}
+          </div>
+
+          <div class="blocks-container" id="container-${page.id}"></div>
+
+          <div class="page-watermark">
+            <i class="fa-solid fa-graduation-cap"></i> Creat amb HistòriaLab Studio • Pàg. ${pageNum}
+          </div>
+        `;
+
+        viewport.appendChild(pageDiv);
+
+        // RENDER BLOCKS INSIDE PAGE
+        const container = pageDiv.querySelector(`#container-${page.id}`);
+        page.blocks.forEach((block, bIdx) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'canvas-item';
+          wrapper.innerHTML = `
+            <div class="item-controls">
+              <input type="color" class="btn-ctrl" style="padding:0; border:none; cursor:pointer;" value="${block.borderColor || '#334155'}" onchange="updateBlockBorder(${pIdx}, ${bIdx}, this.value)" title="Color principal del bloc">
+              <button class="btn-ctrl" title="Duplicar Bloc" onclick="duplicateBlock(${pIdx}, ${bIdx})"><i class="fa-solid fa-copy"></i></button>
+              <button class="btn-ctrl btn-ctrl-danger" title="Eliminar Bloc" onclick="deleteBlock(${pIdx}, ${bIdx})"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            ${renderBlockHtml(block, pIdx, bIdx)}
+          `;
+          container.appendChild(wrapper);
+        });
+
+        // INIT SORTABLE JS FOR DRAG & DROP
+        new Sortable(container, {
+          group: 'shared-pages',
+          animation: 150,
+          handle: '.canvas-item',
+          ghostClass: 'sortable-ghost',
+          onEnd: function(evt) {
+            syncStateFromDom();
+          }
+        });
+      });
+    }
+
+    // RENDER INDIVIDUAL BLOCKS
+    function renderBlockHtml(block, pIdx, bIdx) {
+      if (block.type === 'textBlock') {
+        return `
+          <div class="duo-card-render" style="border-bottom-color: ${block.borderColor || '#1cb0f6'};">
+            <h2 class="font-display" style="font-size: 1.15rem; margin-bottom: 0.5rem;" contenteditable="true" onblur="block.title=this.innerText">${block.title}</h2>
+            <div style="font-size: 0.85rem; line-height: 1.6; color: #334155;" contenteditable="true" onblur="block.content=this.innerHTML">${block.content}</div>
+          </div>
+        `;
+      } else if (block.type === 'callouts') {
+        return `
+          <div class="duo-card-render" style="border-bottom-color: ${block.borderColor || '#e2e8f0'};">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.75rem;">
+              <h2 class="font-display" style="font-size: 1.15rem;" contenteditable="true" onblur="block.title=this.innerText">${block.title}</h2>
+              <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="addCalloutItem(${pIdx}, ${bIdx})">+ Quadre</button>
+            </div>
+            <div class="grid-3-cols">
+              ${block.items.map((it, iIdx) => `
+                <div class="callout-box sub-item-wrapper" style="border-left-color: ${it.color || '#ff9600'}; background-color: ${it.color ? it.color+'15' : '#fff7ed'};">
+                  ${renderSubControls(pIdx, bIdx, 'items', iIdx, it.color || '#ff9600')}
+                  <div class="font-display" style="font-size: 0.85rem; margin-bottom: 0.35rem; color: #0f172a; display: flex; justify-content: space-between;">
+                    <span><i class="fa-solid ${it.icon}"></i> <span contenteditable="true" onblur="block.items[${iIdx}].header=this.innerText">${it.header}</span></span>
+                    <i class="fa-solid fa-icons" style="font-size: 0.7rem; opacity: 0.5; cursor: pointer;" onclick="openIconModal('callout', ${pIdx}, ${bIdx}, ${iIdx})"></i>
+                  </div>
+                  <p style="font-size: 0.725rem; font-weight: 600; color: #334155;" contenteditable="true" onblur="block.items[${iIdx}].content=this.innerText">${it.content}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (block.type === 'flowchart') {
+        return `
+          <div class="duo-card-render" style="border-bottom-color: ${block.borderColor || '#ce82ff'};">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h2 class="font-display" style="font-size: 1.15rem;" contenteditable="true" onblur="block.title=this.innerText">${block.title}</h2>
+              <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="addFlowStep(${pIdx}, ${bIdx})">+ Pas</button>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              ${block.steps.map((st, sIdx) => `
+                <div class="sub-item-wrapper" style="flex:1; background:#f8fafc; border:2px solid ${st.color || '#cbd5e1'}; border-radius:12px; padding:0.6rem; text-align:center;">
+                  ${renderSubControls(pIdx, bIdx, 'steps', sIdx, st.color || '#cbd5e1')}
+                  <span class="text-highlight" style="font-size:0.6rem;" contenteditable="true" onblur="block.steps[${sIdx}].badge=this.innerText">${st.badge}</span>
+                  <h4 class="font-display" style="font-size:0.8rem; margin-top:0.2rem;" contenteditable="true" onblur="block.steps[${sIdx}].label=this.innerText">${st.label}</h4>
+                  <p style="font-size:0.65rem; color:#64748b;" contenteditable="true" onblur="block.steps[${sIdx}].desc=this.innerText">${st.desc}</p>
+                </div>
+                ${sIdx < block.steps.length - 1 ? `<i class="fa-solid fa-arrow-right" style="color:var(--duo-purple); font-size:0.85rem;"></i>` : ''}
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (block.type === 'matrix') {
+        return `
+          <div class="duo-card-render" style="border-bottom-color: ${block.borderColor || '#ff9600'};">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h2 class="font-display" style="font-size: 1.15rem;" contenteditable="true" onblur="block.title=this.innerText">${block.title}</h2>
+              <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="addMatrixQuadrant(${pIdx}, ${bIdx})">+ Columna</button>
+            </div>
+            <div class="grid-2-cols">
+              ${block.quadrants.map((q, qIdx) => `
+                <div class="sub-item-wrapper" style="border:2px solid ${q.color || '#cbd5e1'}; border-radius:12px; padding:0.75rem; background:#f8fafc;">
+                  ${renderSubControls(pIdx, bIdx, 'quadrants', qIdx, q.color || '#cbd5e1')}
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+                    <h4 class="font-display" style="font-size:0.85rem;" contenteditable="true" onblur="block.quadrants[${qIdx}].title=this.innerText">${q.title}</h4>
+                    <span class="text-highlight" style="font-size:0.6rem;" contenteditable="true" onblur="block.quadrants[${qIdx}].badge=this.innerText">${q.badge}</span>
+                  </div>
+                  <div style="font-size:0.725rem; color:#475569;" contenteditable="true" onblur="updateMatrixPoints(${pIdx}, ${bIdx}, ${qIdx}, this.innerHTML)">
+                    <ul style="padding-left:0.85rem;">
+                      ${q.points.map(pt => `<li>${pt}</li>`).join('')}
+                    </ul>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (block.type === 'timeline') {
+        return `
+          <div class="duo-card-render" style="border-bottom-color: ${block.borderColor || '#58cc02'};">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h2 class="font-display" style="font-size: 1.15rem;" contenteditable="true" onblur="block.title=this.innerText">${block.title}</h2>
+              <button class="btn-studio btn-dark" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="addTimelineItem(${pIdx}, ${bIdx})">+ Fet</button>
+            </div>
+            <div class="timeline-wrapper">
+              ${block.events.map((ev, eIdx) => `
+                <div class="timeline-node-item sub-item-wrapper">
+                  ${renderSubControls(pIdx, bIdx, 'events', eIdx, ev.color || '#1cb0f6')}
+                  <div class="timeline-icon-dot" style="background:${ev.color || '#1cb0f6'}; border-color:${ev.color || '#1cb0f6'};" onclick="openIconModal('timeline', ${pIdx}, ${bIdx}, ${eIdx})"><i class="fa-solid ${ev.icon}"></i></div>
+                  <div style="background:#f8fafc; border:2px solid ${ev.color || '#cbd5e1'}; border-radius:10px; padding:0.6rem 0.8rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span class="font-display" style="color:${ev.color || '#1cb0f6'}; font-size:0.85rem;" contenteditable="true" onblur="block.events[${eIdx}].year=this.innerText">${ev.year}</span>
+                      <span class="text-highlight" style="font-size:0.6rem;" contenteditable="true" onblur="block.events[${eIdx}].badge=this.innerText">${ev.badge}</span>
+                    </div>
+                    <h4 class="font-display" style="font-size:0.8rem;" contenteditable="true" onblur="block.events[${eIdx}].event=this.innerText">${ev.event}</h4>
+                    <p style="font-size:0.7rem; color:#475569;" contenteditable="true" onblur="block.events[${eIdx}].desc=this.innerText">${ev.desc}</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (block.type === 'sources') {
+        return `
+          <div class="duo-card-render" style="background:#fffbeb; border-bottom-color: ${block.borderColor || '#ffc800'};">
+            <div style="font-family:'Fredoka',sans-serif; font-size:0.8rem; color:#b45309; margin-bottom:0.3rem;">
+              <i class="fa-solid fa-quote-left"></i> <span contenteditable="true" onblur="block.quoteTitle=this.innerText">${block.quoteTitle}</span>
+            </div>
+            <blockquote style="font-style:italic; font-size:0.75rem; border-left:3px solid var(--duo-yellow); padding-left:0.5rem; margin-bottom:0.3rem;" contenteditable="true" onblur="block.quoteText=this.innerText">«${block.quoteText}»</blockquote>
+            <div style="text-align:right; font-size:0.68rem; font-weight:800; color:#92400e;">— <span contenteditable="true" onblur="block.quoteAuthor=this.innerText">${block.quoteAuthor}</span></div>
+          </div>
+        `;
+      } else if (block.type === 'character') {
+        return `
+          <div class="duo-card-render" style="border-bottom-color: ${block.borderColor || '#ce82ff'};">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <div style="width:36px; height:36px; border-radius:10px; background:#faf5ff; color:var(--duo-purple); display:flex; align-items:center; justify-content:center; border:2px solid #e9d5ff; cursor:pointer;" onclick="openIconModal('character', ${pIdx}, ${bIdx})">
+                <i class="fa-solid ${block.icon || 'fa-user-astronaut'}"></i>
+              </div>
+              <div>
+                <h4 class="font-display" style="font-size:0.85rem;" contenteditable="true" onblur="block.charName=this.innerText">${block.charName}</h4>
+                <span class="text-highlight" style="font-size:0.6rem;" contenteditable="true" onblur="block.charRole=this.innerText">${block.charRole}</span>
+              </div>
+            </div>
+            <p style="font-size:0.72rem; color:#475569; margin-top:0.4rem;" contenteditable="true" onblur="block.charDesc=this.innerText">${block.charDesc}</p>
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    // PAGE MANAGEMENT
+    function addPage() {
+      const newPageId = `page-${Date.now()}`;
+      noteState.pages.push({ id: newPageId, blocks: [] });
+      renderCanvas();
+    }
+
+    function deletePage(pIdx) {
+      if (confirm('Segur que vols eliminar aquesta pàgina i tot el seu contingut?')) {
+        noteState.pages.splice(pIdx, 1);
+        renderCanvas();
+      }
+    }
+
+    // BLOCK ACTIONS
+    function addBlock(type) {
+      const targetPage = noteState.pages[noteState.pages.length - 1];
+
+      let newBlock = { type: type };
+      if (type === 'textBlock') {
+        newBlock.title = "Nou Resum Teòric";
+        newBlock.content = "<p>Escriu el teu resum teòric aquí. Pots utilitzar <span class='bold-green'>negretes de colors</span> o <span class='text-highlight'>ressaltats amarills</span>.</p>";
+      } else if (type === 'callouts') {
+        newBlock.title = "Quadres d'Èmfasi";
+        newBlock.items = [
+          { header: "Títol 1", content: "Contingut del quadre.", color: "#ff9600", icon: "fa-fire" },
+          { header: "Títol 2", content: "Contingut del quadre.", color: "#1cb0f6", icon: "fa-book-open" }
+        ];
+      } else if (type === 'flowchart') {
+        newBlock.title = "Esquema de Conceptes";
+        newBlock.steps = [
+          { badge: "Pas 1", label: "Idea Inicial", desc: "Explicació breu.", color: "#cbd5e1" },
+          { badge: "Pas 2", label: "Idea Secundària", desc: "Resultat o efecte.", color: "#cbd5e1" }
+        ];
+      } else if (type === 'matrix') {
+        newBlock.title = "Matriu Comparativa";
+        newBlock.quadrants = [
+          { title: "Grup A", badge: "Atribut", points: ["Punt 1", "Punt 2"], color: "#cbd5e1" },
+          { title: "Grup B", badge: "Atribut", points: ["Punt 1", "Punt 2"], color: "#cbd5e1" }
+        ];
+      } else if (type === 'timeline') {
+        newBlock.title = "Línia Temporal";
+        newBlock.events = [
+          { year: "Any", badge: "Fet", icon: "fa-bolt", event: "Nom de l'Esdeveniment", desc: "Descripció succinta de l'esdeveniment.", color: "#1cb0f6" }
+        ];
+      } else if (type === 'sources') {
+        newBlock.quoteTitle = "Títol de la Font o Document";
+        newBlock.quoteText = "Escriu la cita o text del document aquí...";
+        newBlock.quoteAuthor = "Nom de l'Autor / Origen";
+      } else if (type === 'character') {
+        newBlock.charName = "Nom del Personatge";
+        newBlock.charRole = "Rol o Paper Principal";
+        newBlock.charDesc = "Resum de la seva vida o aportacions rellevants.";
+        newBlock.icon = "fa-user-astronaut";
+      }
+
+      targetPage.blocks.push(newBlock);
+      renderCanvas();
+    }
+
+    function deleteBlock(pIdx, bIdx) {
+      noteState.pages[pIdx].blocks.splice(bIdx, 1);
+      renderCanvas();
+    }
+
+    function duplicateBlock(pIdx, bIdx) {
+      const cloned = JSON.parse(JSON.stringify(noteState.pages[pIdx].blocks[bIdx]));
+      noteState.pages[pIdx].blocks.splice(bIdx + 1, 0, cloned);
+      renderCanvas();
+    }
+
+    function updateBlockBorder(pIdx, bIdx, color) {
+      noteState.pages[pIdx].blocks[bIdx].borderColor = color;
+      renderCanvas();
+    }
+
+    // INDIVIDUAL SUB-ITEM ACTIONS (DELETE AND COLOR)
+    function deleteSubItem(pIdx, bIdx, arrayName, subIdx) {
+      noteState.pages[pIdx].blocks[bIdx][arrayName].splice(subIdx, 1);
+      renderCanvas();
+    }
+
+    function updateSubItemColor(pIdx, bIdx, arrayName, subIdx, color) {
+      noteState.pages[pIdx].blocks[bIdx][arrayName][subIdx].color = color;
+      renderCanvas();
+    }
+
+    // ADD NEW SUB-ITEMS
+    function addCalloutItem(pIdx, bIdx) {
+      noteState.pages[pIdx].blocks[bIdx].items.push({ header: "Nou Quadre", content: "Contingut...", color: "#58cc02", icon: "fa-leaf" });
+      renderCanvas();
+    }
+
+    function addMatrixQuadrant(pIdx, bIdx) {
+      noteState.pages[pIdx].blocks[bIdx].quadrants.push({ title: "Nou Grup", badge: "Atribut", points: ["Punt 1"], color: "#cbd5e1" });
+      renderCanvas();
+    }
+
+    function addFlowStep(pIdx, bIdx) {
+      noteState.pages[pIdx].blocks[bIdx].steps.push({ badge: "Pas", label: "Nou Pas", desc: "Descripció.", color: "#cbd5e1" });
+      renderCanvas();
+    }
+
+    function addTimelineItem(pIdx, bIdx) {
+      noteState.pages[pIdx].blocks[bIdx].events.push({ year: "Any", badge: "Fet", icon: "fa-flag", event: "Nou Esdeveniment", desc: "Explicació.", color: "#1cb0f6" });
+      renderCanvas();
+    }
+
+    function updateMatrixPoints(pIdx, bIdx, qIdx, html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      const points = Array.from(div.querySelectorAll('li')).map(li => li.innerText);
+      if (points.length) noteState.pages[pIdx].blocks[bIdx].quadrants[qIdx].points = points;
+    }
+
+    function syncStateFromDom() {
+      noteState.pages.forEach((page) => {
+        const container = document.getElementById(`container-${page.id}`);
+        if (!container) return;
+      });
+    }
+
+    // FLOATING FORMATTING TOOLBAR
+    function setupFloatingToolbar() {
+      const toolbar = document.getElementById('floatingToolbar');
+
+      document.addEventListener('selectionchange', () => {
+        const selection = window.getSelection();
+        if (document.activeElement && document.activeElement.type === 'color') return;
+
+        if (selection.toString().length > 0 && selection.anchorNode && selection.anchorNode.parentElement.isContentEditable) {
+          toolbar.classList.add('visible');
+          if (selection.rangeCount > 0) {
+            savedRange = selection.getRangeAt(0).cloneRange();
+          }
+        } else {
+          toolbar.classList.remove('visible');
+        }
+      });
+    }
+
+    function applyFormat(cmd) {
+      document.execCommand(cmd, false, null);
+    }
+
+    function applyHighlight() {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const span = document.createElement('span');
+      span.className = 'text-highlight';
+      span.textContent = selection.toString();
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(span);
+    }
+
+    function applyColor(cls) {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const span = document.createElement('span');
+      span.className = cls;
+      span.textContent = selection.toString();
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(span);
+    }
+
+    function applyCustomColor(hex) {
+      if (savedRange) {
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(savedRange);
+        document.execCommand('foreColor', false, hex);
+      } else {
+        document.execCommand('foreColor', false, hex);
+      }
+    }
+
+    // ICON GALLERY & MODAL
+    function renderIconGrid() {
+      const container = document.getElementById('iconGridContainer');
+      const filtered = ICON_DATABASE.filter(item => {
+        const matchesCat = activeCatFilter === 'all' || item.cat === activeCatFilter;
+        const query = document.getElementById('iconSearchInput').value.toLowerCase();
+        const matchesSearch = item.name.toLowerCase().includes(query);
+        return matchesCat && matchesSearch;
+      });
+
+      container.innerHTML = filtered.map(item => `
+        <button class="icon-btn" onclick="selectIcon('${item.name}')">
+          <i class="fa-solid ${item.name}"></i>
+        </button>
+      `).join('');
+    }
+
+    function filterCat(cat) {
+      activeCatFilter = cat;
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      renderIconGrid();
+    }
+
+    function filterIcons() {
+      renderIconGrid();
+    }
+
+    function openIconModal(targetType, pIdx = null, bIdx = null, itemIdx = null) {
+      activeIconTarget = { type: targetType, pIdx, bIdx, itemIdx };
+      document.getElementById('iconModal').classList.remove('hidden');
+    }
+
+    function closeIconModal() {
+      document.getElementById('iconModal').classList.add('hidden');
+    }
+
+    function selectIcon(iconName) {
+      if (!activeIconTarget) return;
+
+      if (activeIconTarget.type === 'cover') {
+        noteState.coverIcon = iconName;
+      } else if (activeIconTarget.type === 'callout') {
+        noteState.pages[activeIconTarget.pIdx].blocks[activeIconTarget.bIdx].items[activeIconTarget.itemIdx].icon = iconName;
+      } else if (activeIconTarget.type === 'timeline') {
+        noteState.pages[activeIconTarget.pIdx].blocks[activeIconTarget.bIdx].events[activeIconTarget.itemIdx].icon = iconName;
+      } else if (activeIconTarget.type === 'character') {
+        noteState.pages[activeIconTarget.pIdx].blocks[activeIconTarget.bIdx].icon = iconName;
+      }
+
+      closeIconModal();
+      renderCanvas();
+    }
+
+    function setCoverBg(gradient) {
+      noteState.coverBg = gradient;
+      renderCanvas();
+    }
+
+    // STRUCTURAL PRESETS (GENERIC)
+    function loadPreset(key) {
+      if (key === 'apunts_basics') {
+        noteState = {
+          title: "Títol del Tema Principal",
+          subtitle: "Subtítol explicatiu de la temàtica",
+          unitText: "UNITAT 1",
+          coverIcon: "fa-book-open",
+          coverBg: "linear-gradient(135deg, #1cb0f6, #0284c7)",
+          pages: [
+            {
+              id: 'page-1',
+              blocks: [
+                {
+                  type: 'textBlock',
+                  title: "Resum Teòric i Introducció",
+                  content: "<p style='margin-bottom:0.5rem;'>Escriu el teu desenvolupament teòric principal aquí. Fes servir <span class='bold-blue'>text ressaltat</span> per als elements importants.</p>"
+                },
+                {
+                  type: 'callouts',
+                  title: "Conceptes Destacats",
+                  items: [
+                    { header: "Concepte Clau 1", content: "Definició o explicació del concepte.", color: "#ff9600", icon: "fa-fire" },
+                    { header: "Concepte Clau 2", content: "Definició o explicació del concepte.", color: "#58cc02", icon: "fa-leaf" }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
+      } else if (key === 'timeline') {
+        noteState = {
+          title: "Eix Cronològic",
+          subtitle: "Evolució temporal dels fets principals",
+          unitText: "CRONOLOGIA",
+          coverIcon: "fa-timeline",
+          coverBg: "linear-gradient(135deg, #58cc02, #059669)",
+          pages: [
+            {
+              id: 'page-1',
+              blocks: [
+                {
+                  type: 'timeline',
+                  title: "Línia del Temps de l'Etapa",
+                  events: [
+                    { year: "Any 1", badge: "Inici", icon: "fa-bolt", event: "Primer Esdeveniment", desc: "Descripció del que va iniciar el procés.", color: "#1cb0f6" },
+                    { year: "Any 2", badge: "Clau", icon: "fa-flag", event: "Esdeveniment Central", desc: "El moment més important del procés.", color: "#ff9600" },
+                    { year: "Any 3", badge: "Final", icon: "fa-gavel", event: "Conclusió o Conseqüència", desc: "El desenllaç històric.", color: "#ce82ff" }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
+      } else if (key === 'biografia') {
+        noteState = {
+          title: "Nom del Personatge",
+          subtitle: "Anàlisi biogràfica i impacte històric",
+          unitText: "BIOGRAFIA",
+          coverIcon: "fa-user-tie",
+          coverBg: "linear-gradient(135deg, #ce82ff, #7e22ce)",
+          pages: [
+            {
+              id: 'page-1',
+              blocks: [
+                {
+                  type: 'character',
+                  charName: "Nom complet",
+                  charRole: "Títol o càrrec principal",
+                  charDesc: "Resum breu de la seva importància i trajectòria vital.",
+                  icon: "fa-chess-king"
+                },
+                {
+                  type: 'textBlock',
+                  title: "Ideologia i Acció Política",
+                  content: "<p>Escriu sobre els ideals, aliats polítics i principals accions de la vida d'aquesta figura històrica.</p>"
+                },
+                {
+                  type: 'timeline',
+                  title: "Fites Vitals",
+                  events: [
+                    { year: "Any", badge: "Naixement", icon: "fa-star", event: "Naixement", desc: "Lloc d'origen i context familiar.", color: "#58cc02" },
+                    { year: "Any", badge: "Acció", icon: "fa-bolt", event: "Fita Important", desc: "Acció més destacada.", color: "#ff9600" }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
+      }
+
+      renderCanvas();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    // SAVE AND LOAD .NOTE FILES
+    function exportNote() {
+      const jsonStr = JSON.stringify(noteState, null, 2);
+      const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+      const blob = new Blob([encoded], { type: 'application/octet-stream' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `apunts_${noteState.title.substring(0, 15).replace(/\s+/g, '_')}.note`;
+      a.click();
+    }
+
+    function importNote(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const raw = evt.target.result;
+          let parsed;
+          try {
+            parsed = JSON.parse(decodeURIComponent(escape(atob(raw))));
+          } catch(err) {
+            parsed = JSON.parse(raw);
+          }
+
+          if (parsed && parsed.title && parsed.pages) {
+            noteState = parsed;
+            renderCanvas();
+            alert("¡Fitxer .note carregat amb èxit!");
+          } else {
+            alert("L'arxiu no té un format vàlid d'HistòriaLab Notes.");
+          }
+        } catch(err) {
+          alert("Error en llegir l'arxiu .note: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // EXPORT TO PDF A4
+    function downloadPDF() {
+      const viewport = document.getElementById('canvasViewport');
+      const cloneViewport = viewport.cloneNode(true);
+
+      // Remove UI elements in PDF (Including sub-controls)
+      cloneViewport.querySelectorAll('.page-header-tag, .item-controls, .sub-controls, .floating-toolbar').forEach(el => el.remove());
+      cloneViewport.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+
+      const opt = {
+        margin: [8, 8, 8, 8],
+        filename: `${noteState.title.substring(0, 20).replace(/\s+/g, '_')}_historialab.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+
+      html2pdf().set(opt).from(cloneViewport).save();
+    }
+  </script>
+</body>
+</html>
