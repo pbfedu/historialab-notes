@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HistòriaLab Notes - Portal Premium</title>
+
+  <!-- Google Fonts: Fredoka & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome 6.5.1 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      /* Paleta Gamificada Premium */
+      --green: #58cc02; --green-dark: #46a302; --green-light: #d7ffb8;
+      --blue: #1cb0f6; --blue-dark: #1899d6; --blue-light: #ddf4ff;
+      --orange: #ff9600; --orange-dark: #e08400; --orange-light: #ffedd5;
+      --purple: #ce82ff; --purple-dark: #b060e0;
+      --red: #ff4b4b; --red-dark: #ea2b2b;
+      --yellow: #ffc800; --yellow-dark: #e0b000; --yellow-light: #fef3c7;
+      --text-main: #334155; --text-light: #64748b;
+      --bg-app: #f4f6f8; --card-border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .font-display { font-family: 'Fredoka', sans-serif; }
+
+    /* --- TOP NAVIGATION BAR --- */
+    .top-navbar {
+      background: white;
+      border-bottom: 2px solid var(--card-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .stat-pro { 
+      display: none; color: var(--yellow-dark); background: var(--yellow-light); 
+      padding: 0.4rem 1rem; border-radius: 20px; border: 2px solid #fde68a; 
+      font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.1rem;
+    }
+
+    /* --- LAYOUT PRINCIPAL --- */
+    .app-container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 850px) {
+      .app-container { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+
+    /* --- COMPONENT: TARGETA BASE --- */
+    .card {
+      background: white;
+      border: 2px solid var(--card-border);
+      border-bottom: 6px solid var(--card-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* --- LLISTA D'UNITATS --- */
+    .unit-card {
+      transition: transform 0.2s;
+      position: relative;
+    }
+    .unit-card:hover { transform: translateY(-3px); }
+
+    .unit-tags {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .tag {
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-family: 'Fredoka', sans-serif;
+    }
+    .tag-unit { background: var(--green-light); color: var(--green-dark); border: 2px solid #bef264; }
+    .tag-time { background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; }
+
+    /* --- BOTONS --- */
+    .btn {
+      width: 100%;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 0.9rem;
+      border-radius: 16px;
+      border: 2px solid rgba(0,0,0,0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1rem;
+    }
+
+    .btn:active { transform: translateY(4px); margin-bottom: -4px; }
+
+    .btn-primary {
+      background-color: var(--blue); color: white;
+      box-shadow: 0 5px 0 0 var(--blue-dark);
+    }
+    .btn-primary:active { box-shadow: 0 1px 0 0 var(--blue-dark); }
+
+    .btn-pro {
+      background-color: var(--orange); color: white;
+      box-shadow: 0 5px 0 0 var(--orange-dark);
+    }
+    .btn-pro:active { box-shadow: 0 1px 0 0 var(--orange-dark); }
+
+    .btn-green {
+      background-color: var(--green); color: white;
+      box-shadow: 0 5px 0 0 var(--green-dark);
+    }
+    .btn-green:active { box-shadow: 0 1px 0 0 var(--green-dark); }
+
+    /* =========================================
+       MODALS (BENVINGUDA I DESCÀRREGA)
+       ========================================= */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .modal-box {
+      background: white;
+      width: 90%; max-width: 480px;
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      border: 4px solid var(--card-border);
+      border-bottom-width: 8px;
+      transform: translateY(30px) scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+
+    .modal-close {
+      position: absolute; top: 1rem; right: 1.2rem;
+      font-size: 1.5rem; color: #94a3b8; cursor: pointer;
+      background: none; border: none; transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--red); }
+
+    .modal-icon {
+      font-size: 3.5rem; color: var(--blue); margin-bottom: 1rem;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .modal-title { font-size: 1.8rem; margin-bottom: 0.5rem; color: #0f172a; }
+    .modal-subtitle { font-size: 1.1rem; color: var(--text-light); margin-bottom: 1.5rem; font-weight: 600; }
+
+    .info-box {
+      background: var(--blue-light); border: 2px solid #bae6fd;
+      border-radius: 16px; padding: 1.2rem; margin-bottom: 1.5rem;
+      font-size: 1rem; line-height: 1.5; color: #0369a1; text-align: left;
+    }
+    .info-box i { color: var(--blue-dark); margin-right: 0.5rem; font-size: 1.2rem;}
+
+    /* Estils dinàmics del modal per usuaris PRO */
+    .modal-box.is-pro { border-color: #fde68a; }
+    .modal-box.is-pro .modal-icon { color: var(--orange); }
+    .modal-box.is-pro .info-box {
+      background: var(--yellow-light); border-color: #fde68a; color: #b45309;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <nav class="top-navbar">
+    <div class="logo">
+      <i class="fa-solid fa-landmark" style="color: var(--blue);"></i>
+      HistòriaLab Notes
+    </div>
+    <div class="nav-actions">
+      <div id="proBadge" class="stat-pro"><i class="fa-solid fa-crown"></i> PRO</div>
+    </div>
+  </nav>
+
+  <div class="app-container">
+    
+    <!-- COLUMNA ESQUERRA: APUNTS -->
+    <main>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="font-display" style="font-size: 1.8rem; color: #0f172a;">
+          <i class="fa-solid fa-map-location-dot" style="color: var(--purple); margin-right: 0.5rem;"></i>
+          Ruta d'Estudi
+        </h2>
+      </div>
+
+      <!-- UNITAT 0 -->
+      <div class="card unit-card">
+        <div class="unit-tags">
+          <span class="tag tag-unit">Unitat 0</span>
+          <span class="tag tag-time"><i class="fa-regular fa-clock"></i> 14 Pàgines</span>
+        </div>
+        <h3 class="font-display" style="font-size: 1.4rem; margin-bottom: 0.5rem;">El Segle XVIII: Absolutisme Borbònic</h3>
+        <p style="color: var(--text-light); font-size: 0.95rem; line-height: 1.5;">De la Guerra de Successió al Despotisme Il·lustrat. Esquemes i cronologia inclosos.</p>
+        
+        <button class="btn btn-primary trigger-download" 
+          data-unit="Unitat 0" 
+          data-title="El Segle XVIII: Absolutisme Borbònic" 
+          data-ad-link="https://el-teu-escurçador.com/unitat-0"
+          data-pro-link="https://drive.google.com/unitat-0-directe">
+          <i class="fa-solid fa-file-pdf"></i> Obtenir Apunts
+        </button>
+      </div>
+
+      <!-- UNITAT 1 -->
+      <div class="card unit-card">
+        <div class="unit-tags">
+          <span class="tag tag-unit">Unitat 1</span>
+          <span class="tag tag-time"><i class="fa-regular fa-clock"></i> 18 Pàgines</span>
+        </div>
+        <h3 class="font-display" style="font-size: 1.4rem; margin-bottom: 0.5rem;">Guerra i Revolució Liberal</h3>
+        <p style="color: var(--text-light); font-size: 0.95rem; line-height: 1.5;">Guerra del Francès, Corts de Cadis i la Independència Hispanoamericana.</p>
+        
+        <button class="btn btn-primary trigger-download" 
+          data-unit="Unitat 1" 
+          data-title="Guerra i Revolució Liberal" 
+          data-ad-link="https://el-teu-escurçador.com/unitat-1"
+          data-pro-link="https://drive.google.com/unitat-1-directe">
+          <i class="fa-solid fa-file-pdf"></i> Obtenir Apunts
+        </button>
+      </div>
+    </main>
+
+    <!-- COLUMNA DRETA: COMUNITAT I INFO -->
+    <aside class="sidebar">
+      <!-- Caixa Comunitat -->
+      <div class="card" style="background: var(--purple-dark); border-color: var(--purple-dark); color: white;">
+        <h3 class="font-display" style="font-size: 1.3rem; margin-bottom: 1rem; color: white;">
+          <i class="fa-solid fa-bullhorn"></i> Un projecte de tots
+        </h3>
+        <p style="font-size: 0.95rem; line-height: 1.4; margin-bottom: 1rem; color: #f3e8ff;">
+          Recorda que <strong>HistòriaLab</strong> segueix sent un projecte 100% gratuït, i no només la secció de Notes, sinó totes les nostres eines i recursos per a estudiants.
+        </p>
+        <p style="font-size: 0.95rem; line-height: 1.4; margin-bottom: 1rem; color: #f3e8ff;">
+          Cada cop que descarregues un PDF passant per l'enllaç o comparteixes la web, fas possible que tot això continuï existint lliure de pagament.
+        </p>
+        <button class="btn" style="background: white; color: var(--purple-dark); box-shadow: 0 4px 0 0 #d8b4fe;" onclick="alert('Copia aquest enllaç: ' + window.location.href)">
+          <i class="fa-solid fa-share-nodes"></i> Compartir Web
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- =========================================
+       MODAL 1: BENVINGUDA (Només d'entrar)
+       ========================================= -->
+  <div id="welcomeModal" class="modal-overlay">
+    <div id="welcomeBox" class="modal-box">
+      <button class="modal-close" onclick="closeWelcome()"><i class="fa-solid fa-xmark"></i></button>
+      
+      <i id="welcomeIcon" class="fa-solid fa-handshake-angle modal-icon" style="color: var(--green);"></i>
+      <h2 id="welcomeTitle" class="modal-title font-display">¡Mantenim-ho Gratuït!</h2>
+      
+      <div id="welcomeInfo" class="info-box" style="background: var(--green-light); border-color: #bef264; color: var(--green-dark);">
+        <p>
+          Benvingut/da a <strong>HistòriaLab Notes</strong>.<br><br>
+          Et recordem que tot l'ecosistema d'HistòriaLab (no només els apunts, sinó qualsevol altre recurs que oferim) segueix sent 100% gratuït per a tothom.<br><br>
+          Per fer-ho possible, les descàrregues passen per un enllaç curt amb publicitat. És una petita acció que ens ajuda immensament a mantenir tot el projecte viu i obert. Gràcies per col·laborar!
+        </p>
+      </div>
+
+      <button id="welcomeBtn" class="btn btn-green" onclick="closeWelcome()">
+        <i class="fa-solid fa-check"></i> Entès, a estudiar!
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================
+       MODAL 2: DESCÀRREGA DE LA UNITAT
+       ========================================= -->
+  <div id="downloadModal" class="modal-overlay">
+    <div id="downloadBox" class="modal-box">
+      <button class="modal-close" onclick="closeDownload()"><i class="fa-solid fa-xmark"></i></button>
+      
+      <i id="modalIcon" class="fa-solid fa-box-open modal-icon"></i>
+      <h2 id="modalHeadline" class="modal-title font-display">Desbloqueja el PDF</h2>
+      <p id="modalUnitDisplay" class="modal-subtitle">Carregant dades...</p>
+      
+      <div id="modalInfoBox" class="info-box">
+        <p>
+          <i class="fa-solid fa-circle-info"></i> <strong>Com funciona?</strong><br>
+          En fer clic al botó, s'obrirà un enllaç extern. Només has de seguir els passos per arribar al teu PDF. Amb aquest petit pas fas possible que HistòriaLab segueixi sent totalment gratuït!
+        </p>
+      </div>
+
+      <button id="modalActionBtn" class="btn btn-primary" onclick="executeDownload()">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Anar a l'enllaç
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Detectar si és usuari PRO (?pro=true a la URL)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isPro = urlParams.get('pro') === 'true';
+
+    const welcomeModal = document.getElementById('welcomeModal');
+    const downloadModal = document.getElementById('downloadModal');
+    let currentDownloadUrl = "";
+
+    window.addEventListener('load', () => {
+      if (isPro) {
+        document.getElementById('proBadge').style.display = 'block';
+        
+        document.querySelectorAll('.trigger-download').forEach(btn => {
+          btn.classList.remove('btn-primary');
+          btn.classList.add('btn-pro');
+          btn.innerHTML = `<i class="fa-solid fa-unlock"></i> Descarregar (Pro)`;
+        });
+
+        document.getElementById('welcomeBox').classList.add('is-pro');
+        document.getElementById('welcomeIcon').className = 'fa-solid fa-crown modal-icon';
+        document.getElementById('welcomeTitle').innerText = "Benvingut/da de nou, PRO!";
+        document.getElementById('welcomeInfo').innerHTML = `
+          <p>
+            Gràcies per fer costat a <strong>HistòriaLab</strong>. Et recordem que gràcies al teu suport, tot el nostre ecosistema de projectes i recursos segueix existint.<br><br>
+            Com a usuari PRO, tens accés directe a tot el material sense enllaços publicitaris. A gaudir de l'estudi!
+          </p>
+        `;
+        const welcomeBtn = document.getElementById('welcomeBtn');
+        welcomeBtn.className = 'btn btn-pro';
+        welcomeBtn.innerHTML = `<i class="fa-solid fa-rocket"></i> Som-hi!`;
+      }
+
+      setTimeout(() => {
+        welcomeModal.classList.add('active');
+      }, 300);
+    });
+
+    function closeWelcome() {
+      welcomeModal.classList.remove('active');
+    }
+
+    document.querySelectorAll('.trigger-download').forEach(button => {
+      button.addEventListener('click', function() {
+        const unitId = this.getAttribute('data-unit');
+        const unitTitle = this.getAttribute('data-title');
+        const linkWithAds = this.getAttribute('data-ad-link');
+        const linkDirect = this.getAttribute('data-pro-link');
+        
+        currentDownloadUrl = isPro ? linkDirect : linkWithAds;
+
+        document.getElementById('modalUnitDisplay').innerHTML = `<span style="color: #0f172a;">${unitId}:</span> ${unitTitle}`;
+
+        const dBox = document.getElementById('downloadBox');
+        const dIcon = document.getElementById('modalIcon');
+        const dHeadline = document.getElementById('modalHeadline');
+        const dInfoBox = document.getElementById('modalInfoBox');
+        const dActionBtn = document.getElementById('modalActionBtn');
+
+        if (isPro) {
+          dBox.classList.add('is-pro');
+          dIcon.className = 'fa-solid fa-crown modal-icon';
+          dHeadline.innerText = "Accés VIP";
+          dInfoBox.innerHTML = `
+            <p>
+              <i class="fa-solid fa-star"></i> <strong>Ets Usuari PRO!</strong><br>
+              Tens accés directe al material d'estudi. Un clic i el PDF és teu.
+            </p>
+          `;
+          dActionBtn.className = 'btn btn-pro';
+          dActionBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-down"></i> Descarregar Directe`;
+        } else {
+          dBox.classList.remove('is-pro');
+          dIcon.className = 'fa-solid fa-box-open modal-icon';
+          dHeadline.innerText = "Desbloqueja el PDF";
+          dInfoBox.innerHTML = `
+            <p>
+              <i class="fa-solid fa-circle-info"></i> <strong>Com funciona?</strong><br>
+              S'obrirà un enllaç curt. Un cop passat, arribaràs directament al teu PDF. Amb això ajudes a que HistòriaLab i els seus projectes continuïn sent gratis per a tothom!
+            </p>
+          `;
+          dActionBtn.className = 'btn btn-primary';
+          dActionBtn.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Anar a l'enllaç`;
+        }
+
+        downloadModal.classList.add('active');
+      });
+    });
+
+    function closeDownload() {
+      downloadModal.classList.remove('active');
+    }
+
+    function executeDownload() {
+      if (currentDownloadUrl) {
+        window.open(currentDownloadUrl, '_blank');
+        closeDownload();
+      }
+    }
+
+    window.addEventListener('click', function(e) {
+      if(e.target === welcomeModal) closeWelcome();
+      if(e.target === downloadModal) closeDownload();
+    });
+  </script>
+</body>
+</html>
