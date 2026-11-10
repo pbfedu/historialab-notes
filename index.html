@@ -60,12 +60,6 @@
       gap: 0.5rem;
     }
 
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
     .stat-pro { 
       display: none; color: var(--yellow-dark); background: var(--yellow-light); 
       padding: 0.4rem 1rem; border-radius: 20px; border: 2px solid #fde68a; 
@@ -95,6 +89,42 @@
       border-radius: 20px;
       padding: 1.5rem;
       margin-bottom: 1.5rem;
+    }
+
+    /* --- TARGETA ESPECIAL PRO --- */
+    .pro-card {
+      display: none; /* S'activa per JS */
+      background: var(--yellow-light);
+      border-color: #fde68a;
+      border-bottom-color: #fcd34d;
+    }
+
+    .pro-card-title {
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .pro-card-text {
+      color: #92400e;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+    }
+    
+    .pro-warning {
+      display: inline-block;
+      background: #fef08a;
+      color: #854d0e;
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 0.5rem;
+      border: 1px solid #fde047;
     }
 
     /* --- LLISTA D'UNITATS --- */
@@ -251,6 +281,23 @@
         </h2>
       </div>
 
+      <!-- SECCIÓ EXCLUSIVA PRO: Descarregar Tot -->
+      <div id="proPanel" class="card pro-card">
+        <h3 class="font-display pro-card-title">
+          <i class="fa-solid fa-file-zipper"></i> Pack Complet (Només PRO)
+        </h3>
+        <p class="pro-card-text">
+          Com a usuari PRO, tens l'avantatge de poder descarregar tots els apunts en un sol fitxer ZIP passant per <strong>un únic anunci</strong>.
+          <br>
+          <span class="pro-warning">
+            <i class="fa-solid fa-triangle-exclamation"></i> Nota: No recomanem aquesta opció si vols col·laborar al màxim amb el projecte, ja que els anuncis individuals ens ajuden molt més!
+          </span>
+        </p>
+        <button class="btn btn-pro" onclick="triggerProAllDownload()">
+          <i class="fa-solid fa-download"></i> Descarregar-ho tot (1 Anunci)
+        </button>
+      </div>
+
       <!-- UNITAT 0 -->
       <div class="card unit-card">
         <div class="unit-tags">
@@ -263,8 +310,7 @@
         <button class="btn btn-primary trigger-download" 
           data-unit="Unitat 0" 
           data-title="El Segle XVIII: Absolutisme Borbònic" 
-          data-ad-link="https://el-teu-escurçador.com/unitat-0"
-          data-pro-link="https://drive.google.com/unitat-0-directe">
+          data-ad-link="https://el-teu-escurçador.com/unitat-0">
           <i class="fa-solid fa-file-pdf"></i> Obtenir Apunts
         </button>
       </div>
@@ -281,8 +327,7 @@
         <button class="btn btn-primary trigger-download" 
           data-unit="Unitat 1" 
           data-title="Guerra i Revolució Liberal" 
-          data-ad-link="https://el-teu-escurçador.com/unitat-1"
-          data-pro-link="https://drive.google.com/unitat-1-directe">
+          data-ad-link="https://el-teu-escurçador.com/unitat-1">
           <i class="fa-solid fa-file-pdf"></i> Obtenir Apunts
         </button>
       </div>
@@ -333,7 +378,7 @@
   </div>
 
   <!-- =========================================
-       MODAL 2: DESCÀRREGA DE LA UNITAT
+       MODAL 2: DESCÀRREGA 
        ========================================= -->
   <div id="downloadModal" class="modal-overlay">
     <div id="downloadBox" class="modal-box">
@@ -346,7 +391,7 @@
       <div id="modalInfoBox" class="info-box">
         <p>
           <i class="fa-solid fa-circle-info"></i> <strong>Com funciona?</strong><br>
-          En fer clic al botó, s'obrirà un enllaç extern. Només has de seguir els passos per arribar al teu PDF. Amb aquest petit pas fas possible que HistòriaLab segueixi sent totalment gratuït!
+          En fer clic al botó, s'obrirà un enllaç curt. Un cop passat, arribaràs directament al teu PDF. Amb això ajudes a que HistòriaLab i els seus projectes continuïn sent gratis per a tothom!
         </p>
       </div>
 
@@ -367,26 +412,23 @@
 
     window.addEventListener('load', () => {
       if (isPro) {
+        // Activem la UI del PRO
         document.getElementById('proBadge').style.display = 'block';
+        document.getElementById('proPanel').style.display = 'block'; // Mostrem el panell per descarregar-ho tot
         
-        document.querySelectorAll('.trigger-download').forEach(btn => {
-          btn.classList.remove('btn-primary');
-          btn.classList.add('btn-pro');
-          btn.innerHTML = `<i class="fa-solid fa-unlock"></i> Descarregar (Pro)`;
-        });
-
+        // Personalitzem el Modal de Benvinguda per reflectir la nova lògica PRO
         document.getElementById('welcomeBox').classList.add('is-pro');
         document.getElementById('welcomeIcon').className = 'fa-solid fa-crown modal-icon';
         document.getElementById('welcomeTitle').innerText = "Benvingut/da de nou, PRO!";
         document.getElementById('welcomeInfo').innerHTML = `
           <p>
-            Gràcies per fer costat a <strong>HistòriaLab</strong>. Et recordem que gràcies al teu suport, tot el nostre ecosistema de projectes i recursos segueix existint.<br><br>
-            Com a usuari PRO, tens accés directe a tot el material sense enllaços publicitaris. A gaudir de l'estudi!
+            Gràcies per fer costat a <strong>HistòriaLab</strong>. Com a usuari PRO, tens noves opcions a l'hora de descarregar el material.<br><br>
+            Pots seguir descarregant els temes de forma individual (la opció que més ajuda al projecte a seguir sent 100% gratuït) o utilitzar el teu avantatge PRO per <strong>descarregar tot el temari de cop</strong> passant només per un únic anunci (tot i que no col·labores tant!). Tu decideixes.
           </p>
         `;
         const welcomeBtn = document.getElementById('welcomeBtn');
         welcomeBtn.className = 'btn btn-pro';
-        welcomeBtn.innerHTML = `<i class="fa-solid fa-rocket"></i> Som-hi!`;
+        welcomeBtn.innerHTML = `<i class="fa-solid fa-rocket"></i> Entès, a estudiar!`;
       }
 
       setTimeout(() => {
@@ -398,14 +440,14 @@
       welcomeModal.classList.remove('active');
     }
 
+    // Lògica per les descàrregues individuals (amb anuncis per a tothom, màxima col·laboració)
     document.querySelectorAll('.trigger-download').forEach(button => {
       button.addEventListener('click', function() {
         const unitId = this.getAttribute('data-unit');
         const unitTitle = this.getAttribute('data-title');
-        const linkWithAds = this.getAttribute('data-ad-link');
-        const linkDirect = this.getAttribute('data-pro-link');
         
-        currentDownloadUrl = isPro ? linkDirect : linkWithAds;
+        // La descàrrega individual sempre passa per l'enllaç amb anunci (és la forma de col·laborar)
+        currentDownloadUrl = this.getAttribute('data-ad-link');
 
         document.getElementById('modalUnitDisplay').innerHTML = `<span style="color: #0f172a;">${unitId}:</span> ${unitTitle}`;
 
@@ -415,35 +457,49 @@
         const dInfoBox = document.getElementById('modalInfoBox');
         const dActionBtn = document.getElementById('modalActionBtn');
 
-        if (isPro) {
-          dBox.classList.add('is-pro');
-          dIcon.className = 'fa-solid fa-crown modal-icon';
-          dHeadline.innerText = "Accés VIP";
-          dInfoBox.innerHTML = `
-            <p>
-              <i class="fa-solid fa-star"></i> <strong>Ets Usuari PRO!</strong><br>
-              Tens accés directe al material d'estudi. Un clic i el PDF és teu.
-            </p>
-          `;
-          dActionBtn.className = 'btn btn-pro';
-          dActionBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-down"></i> Descarregar Directe`;
-        } else {
-          dBox.classList.remove('is-pro');
-          dIcon.className = 'fa-solid fa-box-open modal-icon';
-          dHeadline.innerText = "Desbloqueja el PDF";
-          dInfoBox.innerHTML = `
-            <p>
-              <i class="fa-solid fa-circle-info"></i> <strong>Com funciona?</strong><br>
-              S'obrirà un enllaç curt. Un cop passat, arribaràs directament al teu PDF. Amb això ajudes a que HistòriaLab i els seus projectes continuïn sent gratis per a tothom!
-            </p>
-          `;
-          dActionBtn.className = 'btn btn-primary';
-          dActionBtn.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Anar a l'enllaç`;
-        }
+        dBox.classList.remove('is-pro');
+        dIcon.className = 'fa-solid fa-hand-holding-heart modal-icon';
+        dHeadline.innerText = "Ajuda a HistòriaLab!";
+        dInfoBox.innerHTML = `
+          <p>
+            <i class="fa-solid fa-star"></i> <strong>Opció de Màxima Col·laboració</strong><br>
+            Aquesta descàrrega individual inclou un anunci curt. Passant-lo ens dones un cop de mà immens per seguir creant contingut de qualitat i completament gratuït!
+          </p>
+        `;
+        dActionBtn.className = 'btn btn-primary';
+        dActionBtn.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Obtenir PDF i Col·laborar`;
 
         downloadModal.classList.add('active');
       });
     });
+
+    // Lògica pel botó exclusiu PRO "Descarregar-ho tot (1 anunci)"
+    function triggerProAllDownload() {
+      // Aquest enllaç seria el que agrupa tots els PDFs amb 1 sol anunci
+      currentDownloadUrl = "https://el-teu-escurçador.com/pack-complet-pro";
+
+      document.getElementById('modalUnitDisplay').innerHTML = `<span style="color: #0f172a;">Pack Sencer:</span> Tot el Temari (ZIP)`;
+
+      const dBox = document.getElementById('downloadBox');
+      const dIcon = document.getElementById('modalIcon');
+      const dHeadline = document.getElementById('modalHeadline');
+      const dInfoBox = document.getElementById('modalInfoBox');
+      const dActionBtn = document.getElementById('modalActionBtn');
+
+      dBox.classList.add('is-pro');
+      dIcon.className = 'fa-solid fa-crown modal-icon';
+      dHeadline.innerText = "Avantatge PRO";
+      dInfoBox.innerHTML = `
+        <p>
+          <i class="fa-solid fa-triangle-exclamation"></i> <strong>Recordatori</strong><br>
+          Estàs utilitzant l'opció ràpida. Només veuràs 1 anunci per descarregar-ho absolutament tot. Recorda que si vols col·laborar més a fons amb el projecte, és millor fer-ho tema per tema!
+        </p>
+      `;
+      dActionBtn.className = 'btn btn-pro';
+      dActionBtn.innerHTML = `<i class="fa-solid fa-forward-step"></i> Continuar (1 Anunci)`;
+
+      downloadModal.classList.add('active');
+    }
 
     function closeDownload() {
       downloadModal.classList.remove('active');
